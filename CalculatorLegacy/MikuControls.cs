@@ -152,7 +152,7 @@ namespace CalculatorLegacy
         public Numbers Times(Numbers numt)
         {
             Debug.WriteLine($"{_fullNumber}, {numt._fullNumber}, {numt._fullNumber}");
-            return (numt._fullNumber == 0) ? numt : new(_fullNumber * numt._fullNumber, _deep + numt._deep); 
+            return (numt._fullNumber == 0) ? numt : new(_fullNumber * numt._fullNumber, _deep + numt._deep);
         }
 
         public Numbers Divide(Numbers numd)
@@ -202,7 +202,7 @@ namespace CalculatorLegacy
                 }
                 Debug.WriteLine($"有{zerosAtEnd}个0约掉了");
                 deep = deep == 0 ? -1 : deep;
-            }            
+            }
             _deep = deep;
             _fullNumber = fullNumber;
             OnNumberChanged();
@@ -341,10 +341,7 @@ namespace CalculatorLegacy
             _bbPASTE.MouseDown += new MouseEventHandler(
                 (sender, e) =>
                 {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        ClearCopies();
-                    }
+                    if (e.Button == MouseButtons.Right) ClearCopies();
                 });
 
             Controls.Add(_bbCOPY);
@@ -398,7 +395,7 @@ namespace CalculatorLegacy
         private static readonly HutsuuButton point = new() { Text = "." };
         private static readonly ControlButton ac = new() { Text = "AC" };
         private static readonly ControlButton delete = new() { Text = "DEL" };
-        private static readonly ControlButton sound = new() { Text = "♪" };
+        private static readonly ControlButton sound = new() { Text = "♪" , Enabled = false}; // TODO: 音乐功能
         private static readonly CalculateButton equal = new() { BackColor = ColorList.pink, Text = "=" };
         private static readonly HutsuuButton[,] Keyboard = new HutsuuButton[4, 5] {
             {modes[(int)CalcMode.Plus],   numbers[7], numbers[8], numbers[9], ac},
@@ -423,10 +420,7 @@ namespace CalculatorLegacy
                             Equal_MouseClick(sender, e);
                         Program.MainWindow.Page = Page.Clear;
                     }
-                    else
-                    {
-                        Program.MainWindow.LastNumber.SetNumber(Program.MainWindow.CurrentNumber);
-                    }                        
+                    else Program.MainWindow.LastNumber.SetNumber(Program.MainWindow.CurrentNumber);
                     Program.MainWindow.Mode = (CalcMode)j;
                     Program.MainWindow.DontkeepText = true;
                 };
@@ -447,8 +441,7 @@ namespace CalculatorLegacy
                             Program.MainWindow.Page = Page.Clear;
                             Program.MainWindow.Mode = CalcMode.None;
                         }
-                        else if (Program.MainWindow.Page == Page.Clear)
-                            Program.MainWindow.Page = Page.Second;
+                        else if (Program.MainWindow.Page == Page.Clear) Program.MainWindow.Page = Page.Second;
                     }
                     else Program.MainWindow.CurrentNumber.AddNumber(j);
                 };
@@ -466,14 +459,9 @@ namespace CalculatorLegacy
             {
                 if (Program.MainWindow.Page == Page.Gitguo) Program.MainWindow.CurrentNumber.SetNumber(0);
                 else Program.MainWindow.CurrentNumber.DeleteNumber();
-                if (Program.MainWindow.Page == Page.Gitguo)
-                {
-                    Program.MainWindow.Mode = CalcMode.None;
-                }
-                if (Program.MainWindow.DontkeepText)
-                {
-                    Program.MainWindow.CurrentNumber.SetNumber(0);
-                }
+
+                if (Program.MainWindow.Page == Page.Gitguo) Program.MainWindow.Mode = CalcMode.None;
+                if (Program.MainWindow.DontkeepText) Program.MainWindow.CurrentNumber.SetNumber(0);
             };
 
             point.MouseClick += (_, _) => Program.MainWindow.CurrentNumber.AddPoint();
@@ -499,6 +487,12 @@ namespace CalculatorLegacy
 
                 SoundButton();
             };
+
+            sound.MouseDown += new MouseEventHandler(
+                (sender, e) =>
+                {
+                    if (e.Button == MouseButtons.Right) Program.MainWindow.ShowHelp();
+                });
 
             SizeChanged += (_, _) =>
             {
