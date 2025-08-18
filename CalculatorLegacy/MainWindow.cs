@@ -23,6 +23,7 @@ namespace CalculatorLegacy
             InitializeComponent();
             lblText.ForeColor = ColorList.pink;
             CurrentNumber.NumberChanged += (_, _) => lblText.Text = CurrentNumber.ToString();
+            CurrentNumber.SetNumber(0);
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
