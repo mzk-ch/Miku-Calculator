@@ -59,17 +59,22 @@ namespace CalculatorLegacy
 
         public override string ToString()
         {
+            bool xuejian = _fullNumber > MaxValue && _deep > 0;
+            int tail = 0;
+
             Debug.WriteLine($"转换前：{_fullNumber}，{_deep}");
 
-            string origin = _fullNumber.ToString();
-            string ffloat;
-            bool xuejian = _fullNumber > MaxValue && _deep > 0;
-
-            while (_fullNumber > MaxValue && _deep > 0)
+            while (OutValue(_fullNumber) && _deep > 0)
             {
+                tail = (int)(_fullNumber % 10);
                 _fullNumber /= 10;
                 _deep--;
             }
+
+            if (xuejian && tail >= 5) _fullNumber += 1;
+
+            string origin = Math.Abs(_fullNumber).ToString();
+            string ffloat;
 
             Debug.WriteLine($"转换后：{_fullNumber}，{_deep}");
 
@@ -88,14 +93,15 @@ namespace CalculatorLegacy
                 ffloat = _deep == 0 && !xuejian ? "." : "";
             }
 
-            if (_fullNumber > MaxValue)
+            if (OutValue(_fullNumber))
             {
                 Clear();
                 return "ERROR!";
             }
 
             origin = string.IsNullOrEmpty(origin) ? "0" : origin;
-            origin = long.Parse(origin).ToString("N0");
+            string org = long.Parse(origin).ToString("N0");
+            origin = _fullNumber >= 0 ? org : $"-{org}";
 
             return $"{origin}{ffloat}";
         }
@@ -157,7 +163,7 @@ namespace CalculatorLegacy
             Numbers num = new(this);
             int deep = Math.Max(num._deep, 0);
             int deep2 = Math.Max(numd._deep, 0);
-            int deepp = MaxValue.ToString().Length - _fullNumber.ToString().Length + deep2;
+            int deepp = MaxValue.ToString().Length - _fullNumber.ToString().Length + deep2 + 1;
             num._fullNumber *= (long)Math.Pow(10, deepp);
 
             Debug.WriteLine($"{num._fullNumber}, {numd._fullNumber}, {deep + deepp}");
@@ -415,7 +421,7 @@ namespace CalculatorLegacy
                     {
                         if (Program.MainWindow.Page == Page.Second)
                             Equal_MouseClick(sender, e);
-                        Program.MainWindow.Page = Page.Second;
+                        Program.MainWindow.Page = Page.Clear;
                     }
                     else
                     {
